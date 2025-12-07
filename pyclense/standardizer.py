@@ -1,4 +1,4 @@
-from core import DataCleaner
+from .core import DataCleaner  # <--- FIXED: Added '.' to fix the red error
 import pandas as pd
 import re
 from typing import Optional
@@ -106,6 +106,7 @@ class FormatStandardizer(DataCleaner):
     def remove_special_chars(self, columns: list) -> 'FormatStandardizer':
         """
         Removes special characters and emojis, keeping only letters, numbers, and spaces.
+        Adapted from instructor reference 'RemoveSpecialCharacters' and 'RemoveEmojis'.
 
         Parameters:
         -----------
