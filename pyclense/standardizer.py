@@ -6,7 +6,7 @@ from typing import Optional
 class FormatStandardizer(BaseCleaner):
     """
     A class used to standardize formats of data in a DataFrame.
-    Inherits from DataCleaner.
+    Inherits from BaseCleaner.
     """
 
     def standardize_dates(self, columns: list, format: str = '%m/%d/%Y') -> 'FormatStandardizer':
@@ -105,8 +105,7 @@ class FormatStandardizer(BaseCleaner):
     def remove_special_chars(self, columns: list) -> 'FormatStandardizer':
         """
         Removes special characters and emojis, keeping only letters, numbers, and spaces.
-        Adapted from instructor reference 'RemoveSpecialCharacters' and 'RemoveEmojis'.
-
+        
         Parameters:
         -----------
         columns : list
