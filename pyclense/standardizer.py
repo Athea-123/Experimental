@@ -1,9 +1,9 @@
-from .base import BaseCleaner
+from base import BaseCleaner
 import pandas as pd
 import re
 from typing import Optional
 
-class FormatStandardizer(DataCleaner):
+class FormatStandardizer(BaseCleaner):
     """
     A class used to standardize formats of data in a DataFrame.
     Inherits from DataCleaner.
