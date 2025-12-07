@@ -11,7 +11,7 @@ class DuplicateCleaner(BaseCleaner):
 
     def remove(self, keep="first"):
         before = len(self._df)
-        self._df = self._df.drop_duplicates(keep=keep) 
+        self._df = self._df.drop_duplicates(keep=keep) # type: ignore
         after = len(self._df)
 
         removed = before - after
