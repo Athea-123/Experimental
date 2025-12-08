@@ -9,42 +9,15 @@ class Standardizer(BaseCleaner):
     """
 
     def standardize_dates(self, columns: list, format: str = '%m/%d/%Y') -> 'Standardizer':
-        """
-        Converts specified columns to a standard date format.
-
-        Parameters:
-        -----------
-        columns : list
-            A list of column names containing date strings.
-        format : str, optional
-            The format to convert the dates into (default is '%m/%d/%Y', e.g., 12/31/2023).
-
-        Returns:
-        --------
-        Standardizer
-            Returns self to allow method chaining.
-        """
+        """Converts specified columns to a standard date format."""
         for col in columns:
             if col in self._df.columns:
-                # Convert to datetime objects first, then format them back to strings
                 self._df[col] = pd.to_datetime(self._df[col], errors='coerce').dt.strftime(format)
                 self._log_change('standardize_dates', {'column': col, 'format': format})
         return self
 
     def capitalize_names(self, columns: list) -> 'Standardizer':
-        """
-        Converts text in specified columns to Title Case (e.g., 'john doe' -> 'John Doe').
-
-        Parameters:
-        -----------
-        columns : list
-            A list of column names to capitalize.
-
-        Returns:
-        --------
-        Standardizer
-            Returns self to allow method chaining.
-        """
+        """Converts text in specified columns to Title Case."""
         for col in columns:
             if col in self._df.columns:
                 self._df[col] = self._df[col].astype(str).str.title()
@@ -52,19 +25,7 @@ class Standardizer(BaseCleaner):
         return self
 
     def convert_to_lowercase(self, columns: list) -> 'Standardizer':
-        """
-        Converts text in specified columns to lowercase (e.g., 'John Doe' -> 'john doe').
-
-        Parameters:
-        -----------
-        columns : list
-            A list of column names to convert.
-
-        Returns:
-        --------
-        Standardizer
-            Returns self to allow method chaining.
-        """
+        """Converts text in specified columns to lowercase."""
         for col in columns:
             if col in self._df.columns:
                 self._df[col] = self._df[col].astype(str).str.lower()
@@ -72,74 +33,27 @@ class Standardizer(BaseCleaner):
         return self
 
     def fix_whitespace(self, columns: Optional[list] = None) -> 'Standardizer':
-        """
-        Removes leading/trailing whitespace and replaces multiple spaces with a single space.
-        Example: "  Hello    World  " -> "Hello World"
-
-        Parameters:
-        -----------
-        columns : list, optional
-            A list of specific columns to clean. If None, it automatically selects all text columns.
-
-        Returns:
-        --------
-        Standardizer
-            Returns self to allow method chaining.
-        """
-        # If no columns are provided, find all text columns automatically
+        """Removes leading/trailing whitespace and replaces multiple spaces."""
         if columns is None:
             columns = self._df.select_dtypes(include=['object']).columns.tolist()
             
         for col in columns:
             if col in self._df.columns:
-                # Count how many rows have extra spaces before fixing them (for the log)
                 before = (self._df[col].str.contains(r'\s{2,}', na=False)).sum()
-                
-                # .strip() removes side spaces, .replace(r'\s+', ' ') fixes middle spaces
                 self._df[col] = self._df[col].astype(str).str.strip().str.replace(r'\s+', ' ', regex=True)
-                
                 self._log_change('fix_whitespace', {'columns': columns[:2], 'fixed_spaces': before})
         return self
 
     def remove_special_chars(self, columns: list) -> 'Standardizer':
-        """
-        Removes special characters and emojis, keeping only letters, numbers, and spaces.
-        
-        Parameters:
-        -----------
-        columns : list
-            A list of column names to clean.
-
-        Returns:
-        --------
-        Standardizer
-            Returns self to allow method chaining.
-        """
+        """Removes special characters and emojis."""
         for col in columns:
             if col in self._df.columns:
-                # Regex Explanation: [^a-zA-Z0-9\s] means "Find anything that is NOT a letter, number, or space"
-                # and replace it with empty string ''.
                 self._df[col] = self._df[col].astype(str).str.replace(r'[^a-zA-Z0-9\s]', '', regex=True)
                 self._log_change('remove_special_chars', {'column': col})
         return self
 
     def standardize_booleans(self, columns: list) -> 'Standardizer':
-        """
-        Converts columns with various Yes/No formats into standard Python Booleans (True/False).
-        Handles: 'yes', 'y', 'true', '1' -> True
-        Handles: 'no', 'n', 'false', '0' -> False
-
-        Parameters:
-        -----------
-        columns : list
-            A list of column names to standardize.
-
-        Returns:
-        --------
-        Standardizer
-            Returns self to allow method chaining.
-        """
-        # A map of all common ways people write "Yes" or "No"
+        """Converts Yes/No formats into standard True/False."""
         bool_map = {
             'yes': True, 'y': True, 'true': True, '1': True, 't': True,
             'no': False, 'n': False, 'false': False, '0': False, 'f': False
@@ -147,14 +61,17 @@ class Standardizer(BaseCleaner):
 
         for col in columns:
             if col in self._df.columns:
-                # Convert to string and lowercase so "Yes" and "yes" both match the map
                 self._df[col] = self._df[col].astype(str).str.lower().map(bool_map)
                 self._log_change('standardize_booleans', {'column': col})
         return self
     
     def clean(self):
-        """
-        Required by BaseCleaner. 
-        We return self so the code doesn't crash.
-        """
+        """Required by BaseCleaner."""
         return self
+
+    def _log_change(self, method, details):
+        """
+        Helper method to log changes.
+        This must be indented INSIDE the class (same level as def clean).
+        """
+        print(f"Log: {method} - {details}")
