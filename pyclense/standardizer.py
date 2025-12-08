@@ -8,7 +8,7 @@ class Standardizer(BaseCleaner):
     Inherits from BaseCleaner.
     """
 
-    def standardize_dates(self, columns: list, format: str = '%m/%d/%Y') -> 'FormatStandardizer':
+    def standardize_dates(self, columns: list, format: str = '%m/%d/%Y') -> 'Standardizer':
         """
         Converts specified columns to a standard date format.
 
@@ -31,7 +31,7 @@ class Standardizer(BaseCleaner):
                 self._log_change('standardize_dates', {'column': col, 'format': format})
         return self
 
-    def capitalize_names(self, columns: list) -> 'FormatStandardizer':
+    def capitalize_names(self, columns: list) -> 'Standardizer':
         """
         Converts text in specified columns to Title Case (e.g., 'john doe' -> 'John Doe').
 
@@ -51,7 +51,7 @@ class Standardizer(BaseCleaner):
                 self._log_change('capitalize_names', {'column': col})
         return self
 
-    def convert_to_lowercase(self, columns: list) -> 'FormatStandardizer':
+    def convert_to_lowercase(self, columns: list) -> 'Standardizer':
         """
         Converts text in specified columns to lowercase (e.g., 'John Doe' -> 'john doe').
 
@@ -71,7 +71,7 @@ class Standardizer(BaseCleaner):
                 self._log_change('convert_to_lowercase', {'column': col})
         return self
 
-    def fix_whitespace(self, columns: Optional[list] = None) -> 'FormatStandardizer':
+    def fix_whitespace(self, columns: Optional[list] = None) -> 'Standardizer':
         """
         Removes leading/trailing whitespace and replaces multiple spaces with a single space.
         Example: "  Hello    World  " -> "Hello World"
@@ -101,7 +101,7 @@ class Standardizer(BaseCleaner):
                 self._log_change('fix_whitespace', {'columns': columns[:2], 'fixed_spaces': before})
         return self
 
-    def remove_special_chars(self, columns: list) -> 'FormatStandardizer':
+    def remove_special_chars(self, columns: list) -> 'Standardizer':
         """
         Removes special characters and emojis, keeping only letters, numbers, and spaces.
         
@@ -123,7 +123,7 @@ class Standardizer(BaseCleaner):
                 self._log_change('remove_special_chars', {'column': col})
         return self
 
-    def standardize_booleans(self, columns: list) -> 'FormatStandardizer':
+    def standardize_booleans(self, columns: list) -> 'Standardizer':
         """
         Converts columns with various Yes/No formats into standard Python Booleans (True/False).
         Handles: 'yes', 'y', 'true', '1' -> True
