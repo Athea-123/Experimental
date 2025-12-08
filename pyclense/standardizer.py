@@ -9,9 +9,7 @@ class Standardizer(BaseCleaner):
     """
 
     def standardize_dates(self, columns: list, format: str = '%m/%d/%Y') -> 'Standardizer':
-        """
-        Converts specified columns to a standard date format.
-        """
+        """Converts specified columns to a standard date format."""
         for col in columns:
             if col in self._df.columns:
                 self._df[col] = pd.to_datetime(self._df[col], errors='coerce').dt.strftime(format)
@@ -19,9 +17,7 @@ class Standardizer(BaseCleaner):
         return self
 
     def capitalize_names(self, columns: list) -> 'Standardizer':
-        """
-        Converts text in specified columns to Title Case.
-        """
+        """Converts text in specified columns to Title Case."""
         for col in columns:
             if col in self._df.columns:
                 self._df[col] = self._df[col].astype(str).str.title()
@@ -29,9 +25,7 @@ class Standardizer(BaseCleaner):
         return self
 
     def convert_to_lowercase(self, columns: list) -> 'Standardizer':
-        """
-        Converts text in specified columns to lowercase.
-        """
+        """Converts text in specified columns to lowercase."""
         for col in columns:
             if col in self._df.columns:
                 self._df[col] = self._df[col].astype(str).str.lower()
@@ -39,9 +33,7 @@ class Standardizer(BaseCleaner):
         return self
 
     def fix_whitespace(self, columns: Optional[list] = None) -> 'Standardizer':
-        """
-        Removes leading/trailing whitespace and replaces multiple spaces.
-        """
+        """Removes leading/trailing whitespace and replaces multiple spaces."""
         if columns is None:
             columns = self._df.select_dtypes(include=['object']).columns.tolist()
             
@@ -53,9 +45,7 @@ class Standardizer(BaseCleaner):
         return self
 
     def remove_special_chars(self, columns: list) -> 'Standardizer':
-        """
-        Removes special characters and emojis.
-        """
+        """Removes special characters and emojis."""
         for col in columns:
             if col in self._df.columns:
                 self._df[col] = self._df[col].astype(str).str.replace(r'[^a-zA-Z0-9\s]', '', regex=True)
@@ -63,9 +53,7 @@ class Standardizer(BaseCleaner):
         return self
 
     def standardize_booleans(self, columns: list) -> 'Standardizer':
-        """
-        Converts Yes/No formats into standard True/False.
-        """
+        """Converts Yes/No formats into standard True/False."""
         bool_map = {
             'yes': True, 'y': True, 'true': True, '1': True, 't': True,
             'no': False, 'n': False, 'false': False, '0': False, 'f': False
@@ -78,15 +66,12 @@ class Standardizer(BaseCleaner):
         return self
     
     def clean(self):
-        """
-        Required by BaseCleaner. 
-        """
+        """Required by BaseCleaner."""
         return self
 
-    # --- ADDED THIS METHOD TO FIX THE CRASH ---
     def _log_change(self, method, details):
         """
-        A simple helper to print what changes are happening.
-        Replaces the missing method from base.py.
+        Helper method to log changes.
+        This must be indented INSIDE the class (same level as def clean).
         """
         print(f"Log: {method} - {details}")
