@@ -1,18 +1,18 @@
 import pandas as pd
 import os
+from abc import ABC, abstractmethod
 
-class BaseCleaner:
-    """
-    Parent class defining the blueprint for all cleaners.
-    """
-    
-    def __init__(self, data):
-        if isinstance(data, BaseCleaner):
-            self._df = data.df
-            self.filepath = data.filepath
+class BaseCleaner(ABC):
+    def __init__(self, data=None):
+        if data is None:
+            self._df = None
+            self.filepath = None
         elif isinstance(data, pd.DataFrame):
             self._df = data.copy()
             self.filepath = None
+        elif isinstance(data, BaseCleaner):
+            self._df = data.df
+            self.filepath = data.filepath
         else:
             self.filepath = data
             self._df = self._load_data(data)
@@ -51,18 +51,19 @@ class BaseCleaner:
             output_path (str): The destination path for the CSV file.
         """
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        if self._df is None:
+            raise ValueError("No DataFrame loaded. Cannot save to CSV.")
         self._df.to_csv(output_path, index=False)
         print(f"Saved to {output_path}")
-
+    
+    @abstractmethod
     def clean(self):
         """
-        Abstract method intended to be overridden by subclasses.
-
-        This enforces Polymorphism, ensuring every child class implements its own
-        specific cleaning logic.
+        Abstract method for cleaning the dataframe.
+        Subclasses must implement this method to perform specific cleaning operations.
 
         Raises:
-            NotImplementedError: If called directly on the BaseCleaner.
+            NotImplementedError: If a subclass does not implement the clean() method.
         """
         raise NotImplementedError("Subclasses must implement the clean() method.")
 
@@ -73,4 +74,6 @@ class BaseCleaner:
         return len(self._df) if self._df is not None else 0
 
     def __getitem__(self, index):
+        if self._df is None:
+            raise ValueError("No DataFrame loaded. Cannot access rows.")
         return self._df.iloc[index]
