@@ -1,37 +1,15 @@
-"""
-Description: A test script to demonstrate and verify the functionality of the cleaning modules.
-             It loads data, runs duplicate removal, missing value filling, and standardization,
-             then saves the result.
-"""
-import sys
-import os
-import pandas as pd
+from pyclense import BaseCleaner, DuplicateCleaner, MissingDataCleaner, FormatStandardizer, CleaningPipeline
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+base = BaseCleaner("data/dataset.csv")
+print(f"Loaded: {base}")        
+print(f"Row count: {len(base)}") 
 
-import duplicate
-import missing
-import standardizer
+pipeline = CleaningPipeline(base)
 
-try:
-    df = pd.read_csv('data/dataset.csv')
-except FileNotFoundError:
-    df = pd.read_csv('../data/dataset.csv')
+pipeline.add_step(DuplicateCleaner)
+pipeline.add_step(MissingDataCleaner)
+pipeline.add_step(FormatStandardizer)
 
-# 1. Remove Duplicates
-df = duplicate.cull_dupes(df)
+final_result = pipeline.run()
 
-# 2. Fill Missing Values
-df = missing.fill_missing(df)
-
-# 3. Standardize Dates and Text
-df = standardizer.standardize_data(df)
-
-# Save Result
-output_path = 'data/cleaned_dataset.csv'
-
-# Ensure directory exists
-os.makedirs(os.path.dirname(output_path), exist_ok=True)
-df.to_csv(output_path, index=False)
-
-print("Processing complete!")
+final_result.save_data("data/cleaned_dataset.csv")
