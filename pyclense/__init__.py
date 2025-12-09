@@ -1,13 +1,3 @@
-from .base import BaseCleaner
-from .duplicate import DuplicateHandler
-from .missing import MissingValueHandler
-from .standardizer import Standardizer 
-
-__all__ = [
-    "BaseCleaner",
-    "DuplicateHandler",
-    "MissingValueHandler",
-    "Standardizer",  
-]
-__version__ = "0.1.0"
-__author__ = "Athea"
+from .duplicate import cull_dupes
+from .missing import fill_missing
+from .standardizer import standardize_data

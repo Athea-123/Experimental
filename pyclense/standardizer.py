@@ -1,41 +1,60 @@
 import pandas as pd
-import re
+import warnings
 
-class Standardizer:
-    def __init__(self, df):
-        self.df = df
+def clean_text(text):
+    """
+    Removes special characters (emojis, non-ASCII symbols) from a string.
+    Example: 'Perfect! 💙' -> 'Perfect!'
+    """
+    if not isinstance(text, str):
+        return text
+    return text.encode('ascii', 'ignore').decode('ascii').strip()
 
-    def clean_column_names(self):
-        """Standardizes column names to Title Case and strips spaces."""
-        if self.df is not None:
-            # Convert headers to string, strip whitespace, and Title Case
-            self.df.columns = [str(c).strip().title() for c in self.df.columns]
-            print(f"Cleaned column names: {list(self.df.columns)}")
+def format_date(date_str):
+    """
+    Converts date strings to MM/DD/YYYY format.
+    This function handles mixed date formats (e.g., '10/15/2025' vs '20-Nov-2025') without warnings.
+    """
+    if pd.isna(date_str) or str(date_str).strip() == "" or str(date_str).lower() == "none":
+        return date_str
+        
+    try:
+        dt = pd.to_datetime(date_str, format='mixed', dayfirst=False)
+        return dt.strftime('%m/%d/%Y')
+    except (ValueError, TypeError, AttributeError):
 
-    def standardize_dates(self, subset=None):
-        """Converts specific columns to datetime objects."""
-        if self.df is not None and subset:
-            for col in subset:
-                if col in self.df.columns:
-                    self.df[col] = pd.to_datetime(self.df[col], errors='coerce')
-            print(f"Standardized Dates in: {subset}")
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                dt = pd.to_datetime(date_str, dayfirst=False, errors='coerce')
+            
+            if pd.isna(dt):
+                return date_str
+            return dt.strftime('%m/%d/%Y')
+        except:
+            return date_str
 
-    # Legacy method from your previous scripts (Currency Cleaning)
-    def clean_currency_column(self, col):
-        """Removes symbols like '$' from currency columns and converts to numeric."""
-        if self.df is not None and col in self.df.columns:
-            self.df[col] = pd.to_numeric(
-                self.df[col].astype(str).str.replace(r'[^\d.]', '', regex=True),
-                errors='coerce'
-            )
-            print(f"Cleaned currency column: '{col}'")
+def standardize_data(df):
+    """
+    Applies text cleaning and date formatting to the DataFrame.
+
+    Specifically:
+    1. Formats the 'Review Date' column to 'MM/DD/YYYY' if it exists.
+    2. Removes special characters from all other object (string) columns.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame to standardize.
+
+    Returns:
+        pd.DataFrame: The standardized DataFrame.
+    """
+    # Standardize 'Review Date' column if it exists
+    if 'Review Date' in df.columns:
+        df['Review Date'] = df['Review Date'].apply(format_date)
     
-    # Legacy method from your previous scripts (Guest Cleaning)
-    def clean_guests_column(self, col):
-        """Extracts numbers from strings like '6+' -> 6."""
-        if self.df is not None and col in self.df.columns:
-             self.df[col] = pd.to_numeric(
-                 self.df[col].astype(str).str.extract(r'(\d+)')[0], 
-                 errors='coerce'
-             )
-             print(f"Cleaned guests column: '{col}'")
+    # Clean special characters from all text columns
+    for col in df.select_dtypes(include=['object']).columns:
+        if col != 'Review Date':
+            df[col] = df[col].apply(clean_text)
+            
+    return df
