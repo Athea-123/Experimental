@@ -7,13 +7,13 @@ except FileNotFoundError:
     long_desc = ""
 
 setup(
-    name="Pyclense",
+    name="Pyclensee",
     version="0.1.2",
     author="Athea",
     description="A simple, user-friendly Python library for basic data cleaning tasks.",
     long_description=long_desc,
     long_description_content_type="text/markdown",
-    url="https://github.com/Athea-123/Pyclense.git",
+    url="https://github.com/Athea-123/Pyclensee.git",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
