@@ -1,19 +1,22 @@
 from .base import BaseCleaner
 
 class MissingDataCleaner(BaseCleaner):
+    """
+    A cleaner to handle missing data by dropping rows based on a subset of columns.
+    """
+    def __init__(self, data=None, subset=None):
+        super().__init__(data)
+        self.subset = subset
+
     def clean(self):
-        """
-        Executes the missing value filling process.
-
-        This method overrides the parent `clean()` method. It performs two key operations:
-        1. Fills standard pandas `NaN` values with the string "None".
-        2. Identifies strings containing only whitespace (e.g., "   ") and replaces 
-           them with "None".
-
-        Returns:
-            pd.DataFrame: The DataFrame with missing values filled.
-        """
-        self.df = self.df.fillna("None")
-        self.df = self.df.replace(r'^\s*$', 'None', regex=True)
-        print("[Missing] Filled missing values.")
+        if self.df is None:
+            return None
+        
+        if not self.subset:
+            print("[MissingDataCleaner] No subset provided; no rows were dropped.")
+            return self.df
+        
+        initial_rows = len(self.df)
+        self.df.dropna(subset=self.subset, inplace=True)
+        print(f'[MissingDataCleaner] Dropped {initial_rows - len(self.df)} rows with missing values in {self.subset}.')
         return self.df

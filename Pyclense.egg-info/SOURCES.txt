@@ -14,4 +14,3 @@ pyclense/duplicate.py
 pyclense/missing.py
 pyclense/pipeline.py
 pyclense/standardizer.py
-pyclense/test_main.py

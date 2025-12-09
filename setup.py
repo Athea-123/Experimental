@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 
-# Safely read README
 try:
     with open("README.md", "r", encoding="utf-8") as f:
         long_desc = f.read()
@@ -10,11 +9,11 @@ except FileNotFoundError:
 setup(
     name="Pyclense",
     version="0.1.1",
-    author="Group 7",
+    author="Athea",
     description="A simple, user-friendly Python library for basic data cleaning tasks.",
     long_description=long_desc,
     long_description_content_type="text/markdown",
-    url="https://github.com/Athea-123/Pyclense",
+    url="https://github.com/Athea-123/Pyclense.git",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
