@@ -7,5 +7,3 @@ class DuplicateCleaner(BaseCleaner):
         removed = initial - len(self)
         print(f"[Duplicate] Removed {removed} rows.")
         return self.df
-
-        #

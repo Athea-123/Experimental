@@ -7,10 +7,7 @@ class BaseCleaner:
     """
     
     def __init__(self, data):
-        if isinstance(data, BaseCleaner):
-            self._df = data.df
-            self.filepath = data.filepath
-        elif isinstance(data, pd.DataFrame):
+        if isinstance(data, pd.DataFrame):
             self._df = data.copy()
             self.filepath = None
         else:
@@ -28,7 +25,7 @@ class BaseCleaner:
     def _load_data(self, filepath):
         """
         Protected helper method to load data from a file.
-        
+
         Automatically detects CSV or Excel formats based on file extension.
 
         Args:

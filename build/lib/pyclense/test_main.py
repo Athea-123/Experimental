@@ -11,7 +11,7 @@ print(f"Row count: {len(base)}")
 # Set up the Pipeline
 pipeline = CleaningPipeline(base)
 
-    #Register the specific tools to be used. Note that the class names are passed directly, not instances
+#Register the specific tools to be used. Note that the class names are passed directly, not instances
 pipeline.add_step(DuplicateCleaner)
 pipeline.add_step(MissingDataCleaner)
 pipeline.add_step(FormatStandardizer)
